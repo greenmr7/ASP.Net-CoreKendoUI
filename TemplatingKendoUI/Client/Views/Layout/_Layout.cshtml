@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Monster Admin Template - The Most Complete & Trusted Bootstrap 4 Admin Template</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="~/KendoUI/css/favicon.ico">
+    <link href="~/KendoUI/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/KendoUI/css/kendo.common.css" rel="stylesheet">
+    <link href="~/KendoUI/css/kendo.metro.min.css" rel="stylesheet">
+    <link href="~/KendoUI/css/Site.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="container-fluid">
+        <!--open container-->
+        <div class="row row-offcanvas row-offcanvas-left">
+            <!--open row-->
+            <div id="nav-section" class="col-xs-12 column">
+                <!--open nav column-->
+                <div class="navbar-default">
+                    <button id="toggle-button" type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <h1 id="dash-logo" class="center-block">Northwind&#183;Dash</h1>
+                <div class="collapse navbar-collapse" id="sidebar-nav" role="navigation">
+                    <ul class="nav">
+                        <li><a href="/Home"><span class="icon icon-info"></span> Dashboard </a></li>
+                        <li><a href="/Departments"><span class="icon icon-faves"></span>Department</a></li>
+                        <li><a href="/Divisions"><span class="icon icon-chart-column"></span>Division</a></li>
+                    </ul>
+                    <div id="rights">
+                        <p>
+                            Copyright &copy;
+                            <script type="text/javascript">document.write(new Date().getFullYear());</script>, Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!--close left column-->
+
+            <div id="main-section" class="col-xs-12 column">
+                <!--open main column-->
+                @RenderBody()
+            </div>
+            <!--close main column-->
+        </div>
+        <!--close row-->
+    </div>
+    <!--close container-->
+
+    <script src="~/KendoUI/js/jquery.min.js"></script>
+    <script src="~/KendoUI/js/kendo.all.min.js"></script>
+    <script src="~/KendoUI/js/kendo.aspnetmvc.min.js"></script>
+    <script src="~/KendoUI/js/bootstrap.min.js"></script>
+    <script src="~/KendoUI/js/sweetalert2@9.js"></script>
+
+    <script>
+        //$(function () {
+        //    $('.nav a[href^="/' + location.pathname.split("/")[1] + '"]').addClass('active');
+        //});
+        $('.nav a').filter(function () {
+            return this.href == location.href
+        }).parent().addClass('active').siblings().removeClass('active')
+        $('.nav a').click(function () {
+            $(this).parent().addClass('active').siblings().removeClass('active')
+        })
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+
+</html>
