@@ -84,7 +84,7 @@ $(document).ready(function () {
             confirmation: false,
         },
         save: function (e) {
-            debugger;
+            //debugger;
             console.log(e);
             if (!e.model.isNew()) {
                 //debugger;
@@ -99,7 +99,7 @@ $(document).ready(function () {
                     dataType: "JSON",
                     data: Division
                 }).then((result) => {
-                    debugger;
+                    //debugger;
                     if (result.statusCode == 200) {
                         Swal.fire({
                             position: 'center',
