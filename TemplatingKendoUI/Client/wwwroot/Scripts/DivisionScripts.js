@@ -1,185 +1,232 @@
-﻿var table = null;
-var arrDepart = [];
+﻿var arrDepart = [];
 
 $(document).ready(function () {
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
+        //$('[data-toggle="tooltip"]').tooltip()
+    });
 
-    //debugger;
-    table = $("#divisions").DataTable({
-        "processing": true,
-        "responsive": true,
-        "pagination": true,
-        "stateSave": true,
-        "ajax": {
-            url: "/divisions/LoadDivision",
-            type: "GET",
-            dataType: "json",
-            dataSrc: "",
-        },
-        "columns": [
-            {
-                "data": "id",
-                "sortable": true,
-                render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
+    var BaseUrl = "/divisions",
+        dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: BaseUrl + "/LoadDivision",
+                    dataType: "json"
+                },
+                //create: {
+                //    url: BaseUrl + "/Insert",
+                //    dataType: "json"
+                //},
+                //update: {
+                //    url: BaseUrl + "/Products/Update",
+                //    dataType: "jsonp"
+                //},
+                //destroy: {
+                //    url: BaseUrl + "/Products/Destroy",
+                //    dataType: "jsonp"
+                //},
+                parameterMap: function (options, operation) {
+                    if (operation !== "read" && options.models) {
+                        return { models: kendo.stringify(options.models) };
+                    }
                 }
             },
-            { "data": "name" },
-            { "data": "departmentName" },
-            {
-                "sortable": false,
-                "render": function (data, type, row) {
-                    //console.log(row);
-                    $('[data-toggle="tooltip"]').tooltip();
-                    return '<button class="btn btn-md btn-outline-warning btn-circle" data-toggle="tooltip" data-placement="left"  title="Edit" onclick="return GetById(' + row.id + ')" ><i class="fa fa-lg fa-edit"></i></button>'
-                        + '&nbsp;'
-                        + '<button class="btn btn-md btn-outline-danger btn-circle" data-placement="right" data-toggle="tooltip" data-animation="false" title="Delete" onclick="return Delete(' + row.id + ')" ><i class="fa fa-lg fa-trash"></i></button>'
+            batch: true,
+            pageSize: 15,
+            schema: {
+                model: {
+                    id: "id",
+                    fields: {
+                        id: { editable: false, nullable: true },
+                        name: { validation: { required: true } },
+                        departmentId: {
+                            defaultValue: {departmentId: 0, departmentName: "----select----"},
+                            validation: { required: true }
+                        },
+                    }
                 }
             }
+        });
+
+
+
+    //debugger;
+    $("#grid").kendoGrid({
+        dataSource: dataSource,
+        groupable: true,
+        sortable: true,
+        navigatable: true,
+        filterable: true,
+        //selectable: "column",
+        pageable: {
+            refresh: true,
+            pageSizes: true,
+            buttonCount: 5
+        },
+        height: 650,
+        toolbar: [{ name: "create", text: " ", title: "Add Data", imageClass: "k-grid-add" }],
+        columns: [
+            { title: "#", field: "id", },
+            { title: "Name", field: "name", },
+            //{ title: "Department Name", field: "departmentName", editor: departmentDropDown, template: "#=departmentName" },
+            { title: "Department Name", field: "departmentName", editor: departmentDropDown,},
+            {
+                sortable: false,
+                title: "Action",
+                command: [
+                    { name: "edit", text: { edit: " ", update: " ", cancel: " " }, title: "Edit Data", imageClass: "k-grid-edit", },
+                    { name: "destroy", text: "", title: "Delete Data", imageClass: "k-grid-delete" },
+                ],
+            },
         ],
-    });
+        editable: {
+            mode: "popup",
+            //mode: "inline",
+            confirmation: false,
+        },
+        save: function (e) {
+            debugger;
+            console.log(e);
+            if (!e.model.isNew()) {
+                //debugger;
+                var Division = new Object();
+                Division.id = e.model.id;
+                Division.name = $('input[name="name"]').val();
+                Division.departmentId = e.model.departmentName;
+                $.ajax({
+                    type: 'POST',
+                    url: BaseUrl + "/InsertAndUpdate/",
+                    cache: false,
+                    dataType: "JSON",
+                    data: Division
+                }).then((result) => {
+                    debugger;
+                    if (result.statusCode == 200) {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Department Updated Successfully',
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        $('#grid').data('kendoGrid').dataSource.read();
+                        $('#grid').data('kendoGrid').refresh();
+                    } else {
+                        Swal.fire('Error', 'Failed to Input', 'error');
+                    }
+                })
+            } else {
+                //debugger;
+                var Division = new Object();
+                Division.name = $('input[name="name"]').val();
+                Division.departmentId = e.model.departmentName.id;
+                $.ajax({
+                    type: 'POST',
+                    url: BaseUrl + "/InsertAndUpdate/",
+                    cache: false,
+                    dataType: "JSON",
+                    data: Division
+                }).then((result) => {
+                    //debugger;
+                    if (result.statusCode == 200) {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Department inserted Successfully',
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        $('#grid').data('kendoGrid').dataSource.read();
+                        $('#grid').data('kendoGrid').refresh();
+                    } else {
+                        Swal.fire('Error', 'Failed to Input', 'error');
+                    }
+                })
+            }
+        },
+        remove: function (e) {
+            //debugger;
+            //console.log("Debugger Hits :)");
+            console.log(e.model.id);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+            }).then((result) => {
+                if (result.value) {
+                    //debugger;
+                    $.ajax({
+                        url: BaseUrl + "/Delete/",
+                        data: { id: e.model.id }
+                    }).then((result) => {
+                        //debugger;
+                        if (result.statusCode == 200) {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                title: 'Delete Successfully',
+                                showConfirmButton: false,
+                                timer: 1500,
+                            });
+                            $('#grid').data('kendoGrid').dataSource.read();
+                            $('#grid').data('kendoGrid').refresh();
+                        } else {
+                            Swal.fire('Error', 'Failed to Delete', 'error');
+                        }
+                    })
+                };
+            });
+        },
+    }).data("kendoGrid");
+
+    $('#grid').kendoTooltip({
+        filter: "a.k-button", // if we filter as td it shows text present in each td of the table
+
+        content: function (e) {
+            //console.log(e);
+            var grid2 = $("#grid").data("kendoGrid");
+            var retStr;
+            //debugger;
+            if (grid2.columns[3].command) {
+                $.each(grid2.columns[3].command, function (index, value) {
+                    //console.log(grid2.columns[2].command);
+                    if (e.target.hasClass(value.imageClass)) {
+                        //console.log(e.target.hasClass(value.imageClass));
+                        retStr = value.title;
+                        //console.log(retStr);
+                        return false
+                    }
+                });
+            }
+            return retStr
+
+        }, //kendo.template($("#template").html()),
+        width: 160,
+        height: 20,
+
+        position: "top"
+    }).data("kendoTooltip");
 
 });
 
-function ClearScreen() {
-    $('#Id').val('');
-    $('#Name').val('');
-    $('#Update').hide();
-    $('#Save').show();
-}
-
-function LoadDepartment(element) {
-    //debugger;
-    if (arrDepart.length === 0) {
-        $.ajax({
-            type: "Get",
-            url: "/Departments/LoadDepartment",
-            success: function (data) {
-                arrDepart = data;
-                renderDepartment(element);
-            }
-        });   
-    }
-    else {
-        renderDepartment(element);
-    }
-}
-
-function renderDepartment(element) {
-    var $option = $(element);
-    $option.empty();
-    $option.append($('<option/>').val('0').text('Select Department').hide());
-    $.each(arrDepart, function (i, val) {
-        $option.append($('<option/>').val(val.id).text(val.name))
-    });
-}
-
-LoadDepartment($('#DepartmentOption'))
-
-
-function GetById(id) {
-    $.ajax({
-        url: "/divisions/GetById/",
-        data: { id: id }
-    }).then((result) => {
-        //debugger;
-        $('#Id').val(result.id);
-        $('#Name').val(result.name);
-        $('#DepartmentOption').val(result.departmentId);
-        $('#Save').hide();
-        $('#Update').show();
-        $('#mymodal').modal('show');
-    })
-}
-
-function Save() {
-    debugger;
-    var Division = new Object();
-    Division.name = $('#Name').val();
-    Division.departmentId = $('#DepartmentOption').val();
-    $.ajax({
-        type: 'POST',
-        url: "/divisions/InsertAndUpdate/",
-        data: Division
-    }).then((result) => {
-        debugger;
-        if (result.statusCode == 200) {
-            Swal.fire({
-                position: 'center',
-                icon: 'success',
-                title: 'inserted Successfully',
-                showConfirmButton: false,
-                timer: 1500,
-            })
-            table.ajax.reload(null, false);
-        } else {
-            Swal.fire('Error', 'Failed to Input', 'error');
-            ClearScreen();
-        }
-    })
-}
-
-function Update() {
-    var Division = new Object();
-    Division.id = $('#Id').val();
-    Division.name = $('#Name').val();
-    Division.departmentId = $('#DepartmentOption').val();
-    $.ajax({
-        type: 'POST',
-        url: "/divisions/InsertAndUpdate/",
-        cache: false,
-        dataType: "JSON",
-        data: Division
-    }).then((result) => {
-        //debugger;
-        if (result.statusCode == 200) {
-            Swal.fire({
-                position: 'center',
-                icon: 'success',
-                title: 'Updated Successfully',
-                showConfirmButton: false,
-                timer: 1500,
-            });
-            table.ajax.reload(null, false);
-        } else {
-            Swal.fire('Error', 'Failed to Input', 'error');
-            ClearScreen();
-        }
-    })
-}
-
-function Delete(id) {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
-    }).then((result) => {
-        if (result.value) {
-            //debugger;
-            $.ajax({
-                url: "/divisions/Delete/",
-                data: { id: id }
-            }).then((result) => {
-                //debugger;
-                if (result.statusCode == 200) {
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        title: 'Delete Successfully',
-                        showConfirmButton: false,
-                        timer: 1500,
-                    });
-                    table.ajax.reload();
-                } else {
-                    Swal.fire('Error', 'Failed to Delete', 'error');
-                    ClearScreen();
+function departmentDropDown(container, options) {
+    $('<input required name="' + options.field + '"/>')
+        .appendTo(container)
+        .kendoDropDownList({
+            autoBind: false,
+            optionLabel: "Select department...",
+            dataTextField: "name",
+            dataValueField: "id",
+            dataSource: {
+                type: "json",
+                transport: {
+                    read: "/Departments/LoadDepartment"
                 }
-            })
-        };
+            },
+
     });
-}
+    console.log(options);
+} 
+

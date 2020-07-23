@@ -124,3 +124,4 @@ D:\MII\MCCOC\#7-Templating\tugas\ASP.Net-CoreKendoUI\TemplatingKendoUI\Client\ob
 D:\MII\MCCOC\#7-Templating\tugas\ASP.Net-CoreKendoUI\TemplatingKendoUI\Client\obj\Debug\netcoreapp2.1\Razor\Views\Layout\_Layout1.cshtml.g.cs
 D:\MII\MCCOC\#7-Templating\tugas\ASP.Net-CoreKendoUI\TemplatingKendoUI\Client\obj\Debug\netcoreapp2.1\Razor\Views\Home\Index.cshtml.g.cs
 D:\MII\MCCOC\#7-Templating\tugas\ASP.Net-CoreKendoUI\TemplatingKendoUI\Client\obj\Debug\netcoreapp2.1\Razor\Views\Departments\Index.cshtml.g.cs
+D:\MII\MCCOC\#7-Templating\tugas\ASP.Net-CoreKendoUI\TemplatingKendoUI\Client\obj\Debug\netcoreapp2.1\Razor\Views\Divisions\Index.cshtml.g.cs

@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Layout/_Layout.cshtml";
+}
+
+<div id="main-section-header" class="row">
+    <h2>@ViewData["Title"]</h2>
+</div>
+
+<div id="about" class="main-section-content row">
+    <div>
+        <h3 class="section-title">Telerik Northwind Dashboard</h3>
+        <p>
+            <div id="grid"></div>
+        </p>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Scripts/DivisionScripts.js"></script>
+}
+

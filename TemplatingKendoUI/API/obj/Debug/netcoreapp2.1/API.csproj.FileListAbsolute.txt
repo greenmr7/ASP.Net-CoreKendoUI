@@ -33,4 +33,3 @@ D:\MII\MCCOC\#7-Templating\tugas\ASP.Net-CoreKendoUI\TemplatingKendoUI\API\obj\D
 D:\MII\MCCOC\#7-Templating\tugas\ASP.Net-CoreKendoUI\TemplatingKendoUI\API\obj\Debug\netcoreapp2.1\API.dll
 D:\MII\MCCOC\#7-Templating\tugas\ASP.Net-CoreKendoUI\TemplatingKendoUI\API\obj\Debug\netcoreapp2.1\API.pdb
 D:\MII\MCCOC\#7-Templating\tugas\ASP.Net-CoreKendoUI\TemplatingKendoUI\API\obj\Debug\netcoreapp2.1\API.genruntimeconfig.cache
-D:\MII\MCCOC\#7-Templating\tugas\ASP.Net-CoreKendoUI\TemplatingKendoUI\API\obj\Debug\netcoreapp2.1\API.csprojAssemblyReference.cache
